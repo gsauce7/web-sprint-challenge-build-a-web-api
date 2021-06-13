@@ -4,25 +4,25 @@ const router = express.Router();
 
 // import the Projects Model
 const Project = require('./projects-model');
-// const { logger, validateUserId, validateUser, validatePost } = require('../middleware/middleware.js');
+// import middlewares
+const { logger, validateProjectId, validateUser, validatePost } = require('../middleware/middleware.js');
 
 
 router.get('/', (req, res, next) => {
-    // get all the Projects from the database - returns an array
+    // Returns an array of projects as the body of the response. If no projects it responds with empty array.
     Project.get()
-        .then(users => {
-            res.json(users)
+        .then(projects => {
+            res.json(projects)
         })
         .catch(next)
 });
 
 
-// router.get('/:id', validateUserId, (req, res) => {
-//     // RETURN THE USER OBJECT
-//     // this needs a middleware to verify user id
+router.get('/:id', validateProjectId, (req, res) => {
+    // Returns a project with the given id as the body of the response. If no project found with the id, it responds with status code 404.
 
-//     res.json(req.user)
-// });
+    res.json(req.project)
+});
 
 // router.post('/', validateUser, (req, res, next) => {
 //     // RETURN THE NEWLY CREATED USER OBJECT
