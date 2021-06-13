@@ -12,3 +12,8 @@ I need this code, but don't know where, perhaps should make some middleware, don
 
 Pull your server into this file and start it!
 */
+const server = require('./api/server');
+
+server.listen(4000, () => {
+    console.log(`* Server running on port http://localhost:4000 *`);
+});
