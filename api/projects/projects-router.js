@@ -5,14 +5,14 @@ const router = express.Router();
 // import the Projects Model
 const Project = require('./projects-model');
 // import middlewares
-const { logger, validateProjectId, validateUser, validatePost } = require('../middleware/middleware.js');
+const { logger, validateProjectId, validateProject, validateAction } = require('../middleware/middleware.js');
 
 
 router.get('/', (req, res, next) => {
     // Returns an array of projects as the body of the response. If no projects it responds with empty array.
     Project.get()
-        .then(projects => {
-            res.json(projects)
+        .then(returnedProjects => {
+            res.json(returnedProjects)
         })
         .catch(next)
 });
@@ -20,21 +20,27 @@ router.get('/', (req, res, next) => {
 
 router.get('/:id', validateProjectId, (req, res) => {
     // Returns a project with the given id as the body of the response. If no project found with the id, it responds with status code 404.
+    Project.get(req.params.id)
+        .then(returnedProject => {
+            res.json(returnedProject)
+        })
+        .catch(next)
 
-    res.json(req.project)
 });
 
-// router.post('/', validateUser, (req, res, next) => {
-//     // RETURN THE NEWLY CREATED USER OBJECT
-//     // this needs a middleware to check that the request body is valid
-//     User.insert({ name: req.name })
-//         .then(newUser => {
-//             // throw new Error('error thrown!')
-//             res.status(201).json(newUser)
-//         })
-//         .catch(next)
+router.post('/', validateProject, (req, res, next) => {
+    // RETURN THE NEWLY CREATED PROJECT OBJECT
+    // middleware `validateProject` is used to check that the request body is valid
+    const newProject = req.body;
+    // Project.insert({ name: req.name, description: req.description })
+    Project.insert(newProject)
+        .then(newProject => {
+            // throw new Error('error thrown!')
+            res.status(201).json(newProject)
+        })
+        .catch(next)
 
-// });
+});
 
 // router.put('/:id', validateUserId, validateUser, (req, res, next) => {
 //     // RETURN THE FRESHLY UPDATED USER OBJECT
