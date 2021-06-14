@@ -45,7 +45,7 @@ router.post('/', validateProject, (req, res, next) => {
 });
 
 router.put('/:id', validateProjectId, validateProject, (req, res, next) => {
-    // RETURN THE FRESHLY UPDATED USER OBJECT
+    // RETURN THE FRESHLY UPDATED PROJECT OBJECT
     // uses middleware to check id and another middleware to check that the request body is valid
     const id = req.params.id;
     const changes = req.body;

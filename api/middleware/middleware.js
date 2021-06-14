@@ -26,6 +26,21 @@ async function validateProjectId(req, res, next) {
     }
 }
 
+async function validateActionId(req, res, next) {
+    try {
+        const action = await Action.get(req.params.id)
+        if (!action) {
+            next({ status: 404, message: 'action not found by id' })
+        } else {
+            next()
+        }
+    } catch (err) {
+        res.status(500).json({
+            message: 'server error finding action',
+        })
+    }
+}
+
 
 function validateProject(req, res, next) {
 
@@ -53,8 +68,13 @@ function validateAction(req, res, next) {
     const { description } = req.body;
     const { notes } = req.body;
 
-    if (!project_id) {
+
+    if (req.body.constructor === Object && Object.keys(req.body).length === 0) {
         res.status(400).json({
+            message: 'missing all fields'
+        })
+    } else if (!project_id) {
+        res.status(404).json({
             message: 'you must supply the id of an existing project',
         })
     } else if (!description || !description.trim()) {
@@ -76,6 +96,7 @@ function validateAction(req, res, next) {
 module.exports = {
     logger,
     validateProjectId,
+    validateActionId,
     validateProject,
     validateAction
 }
