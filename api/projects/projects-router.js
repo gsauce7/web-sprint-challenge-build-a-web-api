@@ -5,7 +5,7 @@ const router = express.Router();
 // import the Projects Model
 const Project = require('./projects-model');
 // import middlewares
-const { logger, validateProjectId, validateProject, validateAction } = require('../middleware/middleware.js');
+const { validateProjectId, validateProject, validateAction } = require('../middleware/middleware.js');
 
 
 router.get('/', (req, res, next) => {
@@ -20,11 +20,13 @@ router.get('/', (req, res, next) => {
 
 router.get('/:id', validateProjectId, (req, res) => {
     // Returns a project with the given id as the body of the response. If no project found with the id, it responds with status code 404.
-    Project.get(req.params.id)
-        .then(returnedProject => {
-            res.json(returnedProject)
+    const id = req.params.id
+    Project.get(id)
+        .then(result => {
+            res.json(result)
         })
         .catch(next)
+
 
 });
 
@@ -34,38 +36,40 @@ router.post('/', validateProject, (req, res, next) => {
     const newProject = req.body;
     // Project.insert({ name: req.name, description: req.description })
     Project.insert(newProject)
-        .then(newProject => {
+        .then(result => {
             // throw new Error('error thrown!')
-            res.status(201).json(newProject)
+            res.status(201).json(result)
         })
         .catch(next)
 
 });
 
-// router.put('/:id', validateUserId, validateUser, (req, res, next) => {
-//     // RETURN THE FRESHLY UPDATED USER OBJECT
-//     // this needs a middleware to verify user id
-//     // and another middleware to check that the request body is valid
-//     User.update(req.params.id, { name: req.name })
-//         .then(() => {
-//             return User.getById(req.params.id)
-//         })
-//         .then(user => {
-//             res.json(user)
-//         })
-//         .catch(next)
-// });
+router.put('/:id', (req, res, next) => {
+    // RETURN THE FRESHLY UPDATED USER OBJECT
+    // uses middleware to check id and another middleware to check that the request body is valid
+    const id = req.params.id;
+    const changes = req.body;
+    Project.update(id, changes)
+        .then(() => {
+            return Project.get(id)
+        })
+        .then(result => {
+            res.json(result)
+        })
+        .catch(next)
+});
 
-// router.delete('/:id', validateUserId, async (req, res, next) => {
-//     // RETURN THE FRESHLY DELETED USER OBJECT
-//     // this needs a middleware to verify user id
-//     try {
-//         await User.remove(req.params.id)
-//         res.json(req.user)
-//     } catch (err) {
-//         next(err)
-//     }
-// });
+
+router.delete('/:id', validateProjectId, async (req, res, next) => {
+    // RETURN THE FRESHLY DELETED USER OBJECT
+
+    try {
+        await Project.remove(req.params.id)
+        res.json(req.project)
+    } catch (err) {
+        next(err)
+    }
+});
 
 // router.get('/:id/posts', validateUserId, async (req, res, next) => {
 //     // RETURN THE ARRAY OF USER POSTS

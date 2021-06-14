@@ -11,7 +11,6 @@ function logger(req, res, next) {
 }
 
 async function validateProjectId(req, res, next) {
-
     // console.log('works')
     try {
         const project = await Project.getById(req.params.id)
@@ -28,6 +27,22 @@ async function validateProjectId(req, res, next) {
     }
 }
 
+// const validateProjectId = async (req, res, next) => {
+//     try {
+//         const { id } = req.params
+//         const project = await Project.findById(id)
+//         if (!project) {
+//             res.status(404).json(`no project with the given id: ${id}`)
+//         } else {
+//             req.project = project
+//             next()
+//         }
+//     } catch (error) {
+//         res.status(500).json({ message: `server error finding project` })
+//     }
+// }
+
+
 function validateProject(req, res, next) {
 
     const { name } = req.body
@@ -43,7 +58,7 @@ function validateProject(req, res, next) {
         })
     } else {
         req.name = name.trim()
-        req.descripton = description.trim()
+        req.description = description.trim()
         next()
     }
 }
