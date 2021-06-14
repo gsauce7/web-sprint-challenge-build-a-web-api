@@ -60,15 +60,11 @@ router.put('/:id', validateProjectId, validateProject, (req, res, next) => {
 });
 
 
-router.delete('/:id', validateProjectId, async (req, res, next) => {
+router.delete('/:id', validateProjectId, (req, res, next) => {
 
-
-    try {
-        await Project.remove(req.params.id)
-
-    } catch (err) {
-        next(err)
-    }
+    Project.remove(req.params.id)
+        .then(next)
+        .catch(next)
 });
 
 router.get('/:id/actions', validateProjectId, async (req, res, next) => {
