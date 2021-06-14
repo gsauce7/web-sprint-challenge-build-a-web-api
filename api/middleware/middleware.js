@@ -10,15 +10,13 @@ function logger(req, res, next) {
     next()
 }
 
+
 async function validateProjectId(req, res, next) {
-    // console.log('works')
     try {
         const project = await Project.get(req.params.id)
-        console.log(`line 17 middleware: ${project}`)
-        if (project.length < 1) {
-            next({ status: 404, message: 'project not found' })
+        if (!project) {
+            next({ status: 404, message: 'project not found by id' })
         } else {
-            req.project = project
             next()
         }
     } catch (err) {
