@@ -13,8 +13,9 @@ function logger(req, res, next) {
 async function validateProjectId(req, res, next) {
     // console.log('works')
     try {
-        const project = await Project.getById(req.params.id)
-        if (!project) {
+        const project = await Project.get(req.params.id)
+        console.log(`line 17 middleware: ${project}`)
+        if (project.length < 1) {
             next({ status: 404, message: 'project not found' })
         } else {
             req.project = project
@@ -26,21 +27,6 @@ async function validateProjectId(req, res, next) {
         })
     }
 }
-
-// const validateProjectId = async (req, res, next) => {
-//     try {
-//         const { id } = req.params
-//         const project = await Project.findById(id)
-//         if (!project) {
-//             res.status(404).json(`no project with the given id: ${id}`)
-//         } else {
-//             req.project = project
-//             next()
-//         }
-//     } catch (error) {
-//         res.status(500).json({ message: `server error finding project` })
-//     }
-// }
 
 
 function validateProject(req, res, next) {

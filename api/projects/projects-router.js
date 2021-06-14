@@ -18,12 +18,12 @@ router.get('/', (req, res, next) => {
 });
 
 
-router.get('/:id', validateProjectId, (req, res) => {
+router.get('/:id', validateProjectId, (req, res, next) => {
     // Returns a project with the given id as the body of the response. If no project found with the id, it responds with status code 404.
-    const id = req.params.id
-    Project.get(id)
+
+    Project.get(req.params.id)
         .then(result => {
-            res.json(result)
+            res.status(200).json(result)
         })
         .catch(next)
 
@@ -44,7 +44,7 @@ router.post('/', validateProject, (req, res, next) => {
 
 });
 
-router.put('/:id', (req, res, next) => {
+router.put('/:id', validateProjectId, validateProject, (req, res, next) => {
     // RETURN THE FRESHLY UPDATED USER OBJECT
     // uses middleware to check id and another middleware to check that the request body is valid
     const id = req.params.id;
@@ -61,51 +61,35 @@ router.put('/:id', (req, res, next) => {
 
 
 router.delete('/:id', validateProjectId, async (req, res, next) => {
-    // RETURN THE FRESHLY DELETED USER OBJECT
+
 
     try {
         await Project.remove(req.params.id)
-        res.json(req.project)
+
     } catch (err) {
         next(err)
     }
 });
 
-// router.get('/:id/posts', validateUserId, async (req, res, next) => {
-//     // RETURN THE ARRAY OF USER POSTS
-//     // this needs a middleware to verify user id
-//     try {
-//         const postArray = await User.getUserPosts(req.params.id)
-//         res.json(postArray)
-//     } catch (err) {
-//         next(err)
-//     }
-// });
+router.get('/:id/actions', validateProjectId, async (req, res, next) => {
+    // RETURN THE ARRAY OF ACTIONS ASSOCIATED WITH THE PROJECT ID
 
-// router.post('/:id/posts', validateUserId, validatePost, async (req, res, next) => {
-//     // RETURN THE NEWLY CREATED USER POST
-//     // this needs a middleware to verify user id
-//     // and another middleware to check that the request body is valid
-//     try {
-
-//         const newPost = await Post.insert({
-//             user_id: req.params.id,
-//             text: req.text,
-//         })
-//         res.status(201).json(newPost)
-//     } catch (err) {
-//         next(err)
-//     }
-// });
+    try {
+        const actionArray = await Project.getProjectActions(req.params.id)
+        res.json(actionArray)
+    } catch (err) {
+        next(err)
+    }
+});
 
 // error handling middleware
-// router.use((err, req, res, next) => { // eslint - disable - line
-//     res.status(err.status || 500).json({
-//         customMessage: 'something horrible happened inside posts router',
-//         message: err.message,
-//         stack: err.stack
-//     })
-// })
+router.use((err, req, res, next) => { // eslint - disable - line
+    res.status(err.status || 500).json({
+        customMessage: 'something horrible happened inside projects router',
+        message: err.message,
+        stack: err.stack
+    })
+})
 
 // export the router
 module.exports = router

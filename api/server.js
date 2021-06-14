@@ -1,7 +1,7 @@
 const express = require('express');
 const server = express();
 // const { logger, validate...} = require('./middleware/middleware');
-// const actionsRouter = require('./actions/actions-router');
+const actionsRouter = require('./actions/actions-router');
 const projectsRouter = require('./projects/projects-router');
 
 // Configure your server here
@@ -12,8 +12,8 @@ const projectsRouter = require('./projects/projects-router');
 // give your server the ability to parse JSON in request bodies
 server.use(express.json())
 // connect global middleware and the routes
-// server.use(logger, validateXyz, validateOneTwoThree, validateThis)
-// server.use('/api/actions', actionsRouter)
+// server.use(logger)
+server.use('/api/actions', actionsRouter)
 server.use('/api/projects', projectsRouter)
 
 server.get('/', (req, res) => {
